@@ -2,6 +2,9 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import javax.sound.midi.Soundbank;
 import java.time.Duration;
@@ -19,25 +22,35 @@ public class HelloWebDriver {
 //        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(15));
 
         driver.get("https://www.selenium.dev/");
-        WebElement searchClass = driver.findElement(By.className("DocSearch-Search-Icon"));
+        //risky point here
+
+//        using own method
+        WebElement searchClass = waitForElementLocateBy(driver, By.className("DocSearch-Search-Icon"));
         searchClass.click();
         WebElement searchInput = driver.findElement(By.className("DocSearch-Input"));
         searchInput.sendKeys("selenium java");
+        //risky point here
 
-
-        List<WebElement> searchResult=driver.findElements(By
-                        .xpath("(//div[contains(@class, 'DocSearch-Hit-Container') and contains(., 'Selenium') and contains(., 'Java') ])"));
+        List<WebElement> searchResult=waitForElementsLocateBy(driver,
+                By.xpath("//div[contains(@class, 'DocSearch-Hit-Container') and contains(., 'Selenium') and contains(., 'Java') ]"));
         driver.quit();
-
-//        WebElement search=driver.findElement(By.xpath("//div[contains(@class, 'DocSearch-Hit-Container') and contains(., 'Selenium') and contains(., 'Java')]"));
-//        System.out.println("number of results"+searchResult.size());
+        System.out.println("number of results = "+searchResult.size());
 
 //         WebElement searchBtn=driver.findElement(By.xpath(""));
 //         searchBtn.click();
 
 //        don't solve Synchronization problems
 //        Thread.sleep(2000);
-
-//        driver.quit();
     }
+
+    //      search with expectation
+    private static WebElement waitForElementLocateBy(WebDriver driver, By by) {
+        return new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.presenceOfElementLocated(by));
+    }
+    private static List<WebElement> waitForElementsLocateBy(WebDriver driver, By by) {
+        return new WebDriverWait(driver, Duration.ofSeconds(10))
+                .until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
+    }
+
 }
