@@ -1,16 +1,17 @@
+package wait;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import wait.CustomConditions;
 
 import java.time.Duration;
 import java.util.List;
 
-public class HelloWebDriver {
-    public static void main(String[] args) throws InterruptedException {
+public class WebDriverSyncExplicit {
+    public static void main(String[] args)  {
         WebDriver driver = new ChromeDriver();
 //        driver.manage().timeouts().pageLoadTimeout(15, TimeUnit.SECONDS);
 //        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
@@ -52,5 +53,4 @@ public class HelloWebDriver {
         return new WebDriverWait(driver, Duration.ofSeconds(10))
                 .until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
     }
-
 }
