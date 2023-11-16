@@ -50,7 +50,6 @@ public class HomePage extends AbstractPage{
         searchInput.sendKeys(term);
         this.term=term;
         return this;
-
     }
 
     public int countSearchResult() {
