@@ -10,10 +10,7 @@ public class CreatePasteTest {
         HomePage homePage=new HomePage(new ChromeDriver());
         homePage.openPage();
         homePage.setCode("Hello from WebDriver");
-//        homePage.setExpiration("10 Minutes");
-
-
+        homePage.setExpiration("10 Minutes");
+        homePage.setNameOrTitle("helloweb");
     }
-
-
 }
