@@ -28,10 +28,7 @@ public class CreatePasteTest {
         homePage=new HomePage(driver);
         homePage.openPage();
         homePage.setCode("Hello from WebDriver");
-//        homePage.setExpiration("10 Minutes");
-
-
+        homePage.setExpiration("10 Minutes");
+        homePage.setNameOrTitle("helloweb");
     }
-
-
 }
