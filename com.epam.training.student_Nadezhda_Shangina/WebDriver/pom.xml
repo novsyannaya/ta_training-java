@@ -12,6 +12,11 @@
 
     <groupId>org.example</groupId>
     <artifactId>WebDriver</artifactId>
+    <packaging>pom</packaging>
+    <modules>
+        <module>Task_2</module>
+        <module>Task_3</module>
+    </modules>
 
 
 </project>
