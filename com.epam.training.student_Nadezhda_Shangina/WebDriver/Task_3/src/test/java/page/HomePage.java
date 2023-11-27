@@ -12,13 +12,13 @@ public class HomePage extends AbstractPage{
         super(webDriver);
     }
 
-    private String HOMEPAGE_URL="https://cloud.google.com/";
+    private final String HOMEPAGE_URL="https://cloud.google.com/";
 
     private WebElement buttonSearch;
-    private By buttonSearchLocator=By.className("YSM5S");
+    private final By buttonSearchLocator=By.className("YSM5S");
 
     private WebElement inputSearch;
-    private By inputSearchLocator=By.className("mb2a7b");
+    private final By inputSearchLocator=By.className("mb2a7b");
 
     private WebElement linkGoToResult;
     private By linkGoToResultLocator;
@@ -31,7 +31,7 @@ public class HomePage extends AbstractPage{
         return this;
     }
 
-    public HomePage search(String textForSearch) {
+    public void search(String textForSearch) {
         buttonSearch=waitForElementLocateBy(buttonSearchLocator);
         buttonSearch.click();
         inputSearch=waitForElementLocateBy(inputSearchLocator);
@@ -40,14 +40,12 @@ public class HomePage extends AbstractPage{
         inputSearch.click();
         inputSearch.sendKeys(textForSearch);
         inputSearch.sendKeys(Keys.ENTER);
-        return this;
     }
 
-    public HomePage goToResult(String result) {
+    public void goToResult(String result) {
         String makeLocator="//div[@class='gs-title']//b[contains(.,'"+ result+"')]";
         linkGoToResultLocator=By.xpath(makeLocator);
         linkGoToResult=waitForElementLocateBy(linkGoToResultLocator);
         linkGoToResult.click();
-        return this;
     }
 }

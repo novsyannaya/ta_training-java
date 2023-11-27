@@ -1,9 +1,8 @@
 package test;
 
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
+import org.testng.Assert;
+import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import page.CalculatorPage;
@@ -26,14 +25,25 @@ public class GetEmailTest {
     String localSSD;
     String datacenterLocation;
     String committedUsage;
+    String totalEstimatedCost;
 
 
-    @BeforeMethod
+    @BeforeTest
     public void beforeTest(){
         driver=new ChromeDriver();
+        driver.manage().window().maximize();
         homePage=new HomePage(driver);
         calculatorPage = new CalculatorPage(driver);
     }
+
+    @AfterTest
+    public  void afterTest() {
+        if (driver != null) {
+            driver.quit();
+            driver = null;
+        }
+    }
+
     @Test
     public void getEmailWithCalculation () throws InterruptedException {
         String textToInput = "Google Cloud Pricing Calculator";
@@ -52,8 +62,9 @@ public class GetEmailTest {
         numberOfGPUs="1";
         localSSD="2x375 GB";
         datacenterLocation="Frankfurt (europe-west3)";
-
         committedUsage="1 Year";
+
+        totalEstimatedCost="Total Estimated Cost: USD 1,081.20 per 1 month";
 
         calculatorPage.selectProduct(product);
         calculatorPage.setNumberOfInstances(numberOfInstances);
@@ -69,28 +80,9 @@ public class GetEmailTest {
         calculatorPage.setDatacenterLocation(datacenterLocation);
         calculatorPage.setCommittedUsage(committedUsage);
         calculatorPage.AddToEstimate();
+        Assert.assertTrue(calculatorPage.checkTotalEstimatedCost());
 
-
-//      * Number of GPUs: 1
-//      * Local SSD: 2x375 Gb
-//      * Datacenter location: Frankfurt (europe-west3)
-//      * Committed usage: 1 Year
-
-
-
-
-        System.out.println(1);
-
+        calculatorPage.sendEstimateToEmail();
+        Assert.assertTrue(calculatorPage.checkCostFromEmail());
     }
-
-    //      * Provisioning model: Regular
-//      * Machine Family: General purpose 
-//      * Series: N1 
-//      * Machine type: n1-standard-8 (vCPUs: 8, RAM: 30 GB)
-//      * Select “Add GPUs“
-//      * GPU type: NVIDIA Tesla V100
-//      * Number of GPUs: 1
-//      * Local SSD: 2x375 Gb
-//      * Datacenter location: Frankfurt (europe-west3)
-//      * Committed usage: 1 Year
 }

@@ -5,6 +5,8 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class CalculatorPage extends AbstractPage{
     public CalculatorPage(WebDriver driver) {
@@ -12,107 +14,116 @@ public class CalculatorPage extends AbstractPage{
     }
 
     private boolean flagInForm =false;
-    private final int TIME_FOR_GET_TEXT=400;
+    private final int TIME_FOR_GET_TEXT=500;
+    String idTabThisPage;
+    String idTabEmail;
+    private boolean flagSentEmail=false;
+    GenerateEmailPage generateEmailPage;
 
     private WebElement inputNumberOfInstances;
-    private By inputNumberOfInstancesLocator= By.id("input_100");
+    private final By inputNumberOfInstancesLocator= By.id("input_100");
 
     private List<WebElement> products;
-    private By productsLocator=By.xpath("//*[contains(@id, 'tab-item-')]");
+    private final By productsLocator=By.xpath("//*[contains(@id, 'tab-item-')]");
 
     private WebElement softwareSelect;
-    private By softwareSelectLocator=By.id("select_113");
+    private final By softwareSelectLocator=By.id("select_113");
     private List<WebElement> listSoftware;
     private final By listSoftwareLocator =By.xpath("//*[@id='select_container_114']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement provisioningModelSelect;
-    private By provisioningSelectLocator=By.id("select_117");
+    private final By provisioningSelectLocator=By.id("select_117");
     private List<WebElement> listProvisioningModel;
     private final By listProvisioningModelLocator =By.xpath("//*[@id='select_container_118']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement machineFamilySelect;
-    private By machineFamilySelectLocator=By.id("select_123");
+    private final By machineFamilySelectLocator=By.id("select_123");
     private List<WebElement> listMachineFamily;
     private final By listMachineFamilyLocator =By.xpath("//*[@id='select_container_124']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement seriesSelect;
-    private By seriesSelectLocator=By.id("select_125");
+    private final By seriesSelectLocator=By.id("select_125");
     private List<WebElement> listSeries;
     private final By listSeriesLocator =By.xpath("//*[@id='select_container_126']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement machineTypeSelect;
-    private By machineTypeSelectLocator=By.id("select_127");
+    private final By machineTypeSelectLocator=By.id("select_127");
     private List<WebElement> listMachineType;
     private final By listMachineTypeLocator =By.xpath("//*[@id='select_container_128']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement checkboxAddGPUs;
-    private By checkboxAddGPUsLocator=By.xpath("//*[@ng-model='listingCtrl.computeServer.addGPUs']" +
+    private final By checkboxAddGPUsLocator=By.xpath("//*[@ng-model='listingCtrl.computeServer.addGPUs']" +
             "//*[@class='md-container md-ink-ripple']");
 
     private WebElement gPUTypeSelect;
-    private By gPUTypeSelectLocator=By.id("select_508");
+    private final By gPUTypeSelectLocator=By.id("select_508");
     private List<WebElement> listGPUType;
     private final By listGPUTypeLocator =By.xpath("//*[@id='select_container_509']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement numberOfGPUsSelect;
-    private By numberOfGPUsSelectLocator =By.id("select_510");
+    private final By numberOfGPUsSelectLocator =By.id("select_510");
     private List<WebElement> listNumberOfGPUs;
     private final By listNumberOfGPUsLocator =By.xpath("//*[@id='select_container_511']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement localSSDSelect;
-    private By localSSDSelectLocator=By.id("select_467");
+    private final By localSSDSelectLocator=By.id("select_467");
     private List<WebElement> listLocalSSD;
     private final By listLocalSSDLocator =By.xpath("//*[@id='select_container_468']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement datacenterLocationSelect;
-    private By datacenterLocationSelectLocator=By.id("select_133");
+    private final By datacenterLocationSelectLocator=By.id("select_133");
     private List<WebElement> listDatacenterLocation;
     private final By listDatacenterLocationLocator =By.xpath("//*[@id='select_container_134']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement committedUsageSelect;
-    private By committedUsageSelectLocator=By.id("select_140");
+    private final By committedUsageSelectLocator=By.id("select_140");
     private List<WebElement> listCommittedUsage;
     private final By listCommittedUsageLocator =By.xpath("//*[@id='select_container_141']" +
             "//*[contains(@id, 'select_option_')]");
 
     private WebElement buttonAddToEstimate;
-    private By buttonAddToEstimateLocator=By.xpath("//*[@name='ComputeEngineForm']//*[@type='button'][normalize-space()='Add to Estimate']");
+    private final By buttonAddToEstimateLocator=By.xpath("//*[@name='ComputeEngineForm']" +
+            "//*[@type='button'][normalize-space()='Add to Estimate']");
+
+    private WebElement totalEstimatedCost;
+    private final By totalEstimatedCostLocator=By.xpath("//*[@class='cpc-cart-total']" +
+            "//*[@class='md-title']");
+    private String totalEstimatedCostText;
 
     @Override
     protected AbstractPage openPage() {
         throw new RuntimeException("Please, don't open page again");
     }
 
-    public CalculatorPage selectProduct(String product) {
+    public void selectProduct(String product) {
         checkPoint();
         products=waitForElementsLocateBy(productsLocator);
         for (WebElement n: products) {
             if (n.getText().equals(product)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setNumberOfInstances(String number) {
+    public void setNumberOfInstances(String number) {
         checkPoint();
         inputNumberOfInstances=waitForElementLocateBy(inputNumberOfInstancesLocator);
         inputNumberOfInstances.click();
         inputNumberOfInstances.sendKeys(number);
-        return this;
     }
 
-    public CalculatorPage setSoftware (String software) throws InterruptedException {
+    public void setSoftware (String software) throws InterruptedException {
         checkPoint();
         softwareSelect=waitForElementLocateBy(softwareSelectLocator);
         softwareSelect.click();
@@ -123,13 +134,13 @@ public class CalculatorPage extends AbstractPage{
             n.getText();
             if (n.getText().equals(software)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setProvisioningModel(String provisioningModel) throws InterruptedException {
+    public void setProvisioningModel(String provisioningModel) throws InterruptedException {
         checkPoint();
         provisioningModelSelect=waitForElementLocateBy(provisioningSelectLocator);
         provisioningModelSelect.click();
@@ -138,13 +149,13 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listProvisioningModel) {
             if (n.getText().equals(provisioningModel)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setMachineFamily(String machineFamily) throws InterruptedException {
+    public void setMachineFamily(String machineFamily) throws InterruptedException {
         checkPoint();
         machineFamilySelect=waitForElementLocateBy(machineFamilySelectLocator);
         machineFamilySelect.click();
@@ -153,13 +164,13 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listMachineFamily) {
             if (n.getText().equals(machineFamily)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setSeries(String series) throws InterruptedException {
+    public void setSeries(String series) throws InterruptedException {
         checkPoint();
         seriesSelect=waitForElementLocateBy(seriesSelectLocator);
         seriesSelect.click();
@@ -168,13 +179,13 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listSeries) {
             if (n.getText().equals(series)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setMachineType(String machineType) throws InterruptedException {
+    public void setMachineType(String machineType) throws InterruptedException {
         checkPoint();
         machineTypeSelect=waitForElementLocateBy(machineTypeSelectLocator);
         machineTypeSelect.click();
@@ -183,20 +194,19 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listMachineType) {
             if (n.getText().equals(machineType)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage selectCheckbox() throws InterruptedException {
+    public void selectCheckbox() {
         checkPoint();
         checkboxAddGPUs=waitForElementLocateBy(checkboxAddGPUsLocator);
         checkboxAddGPUs.click();
-        return this;
     }
 
-    public CalculatorPage setGPUType(String gPUType) throws InterruptedException {
+    public void setGPUType(String gPUType) throws InterruptedException {
         checkPoint();
         gPUTypeSelect=waitForElementLocateBy(gPUTypeSelectLocator);
         gPUTypeSelect.click();
@@ -205,13 +215,13 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listGPUType) {
             if (n.getText().equals(gPUType)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setNumberOfGPUs(String numberOfGPUs) throws InterruptedException {
+    public void setNumberOfGPUs(String numberOfGPUs) throws InterruptedException {
         checkPoint();
         numberOfGPUsSelect=waitForElementLocateBy(numberOfGPUsSelectLocator);
         numberOfGPUsSelect.click();
@@ -220,13 +230,13 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listNumberOfGPUs) {
             if (n.getText().equals(numberOfGPUs)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setLocalSSD(String localSSD) throws InterruptedException {
+    public void setLocalSSD(String localSSD) throws InterruptedException {
         checkPoint();
         localSSDSelect=waitForElementLocateBy(localSSDSelectLocator);
         localSSDSelect.click();
@@ -235,13 +245,13 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listLocalSSD) {
             if (n.getText().equals(localSSD)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setDatacenterLocation(String datacenterLocation) throws InterruptedException {
+    public void setDatacenterLocation(String datacenterLocation) throws InterruptedException {
         checkPoint();
         datacenterLocationSelect=waitForElementLocateBy(datacenterLocationSelectLocator);
         datacenterLocationSelect.click();
@@ -250,13 +260,13 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listDatacenterLocation) {
             if (n.getText().equals(datacenterLocation)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
     }
 
-    public CalculatorPage setCommittedUsage(String committedUsage) throws InterruptedException {
+    public void setCommittedUsage(String committedUsage) throws InterruptedException {
         checkPoint();
         committedUsageSelect=waitForElementLocateBy(committedUsageSelectLocator);
         committedUsageSelect.click();
@@ -265,7 +275,7 @@ public class CalculatorPage extends AbstractPage{
         for (WebElement n: listCommittedUsage) {
             if (n.getText().equals(committedUsage)){
                 n.click();
-                return this;
+                return;
             }
         }
         throw new RuntimeException("Element not found");
@@ -276,12 +286,53 @@ public class CalculatorPage extends AbstractPage{
         buttonAddToEstimate.click();
     }
 
+    public boolean checkTotalEstimatedCost(){
+        totalEstimatedCost=waitForElementLocateBy(totalEstimatedCostLocator);
+        totalEstimatedCostText = totalEstimatedCost.getText();
+        Pattern pattern = Pattern.compile("Total Estimated Cost: USD +[0-9.,]*+ per 1 month");
+        Matcher matcher=pattern.matcher(totalEstimatedCostText);
+        return matcher.matches();
+    }
 
+    public void sendEstimateToEmail() {
+        idTabThisPage =webDriver.getWindowHandle();
+        generateEmailPage= new GenerateEmailPage(webDriver);
+
+        String email = generateEmailPage.makeEmail();
+        idTabEmail = generateEmailPage.getIdTab();
+        webDriver.switchTo().window(idTabThisPage);
+
+        flagInForm=false;
+        checkPoint();
+        WebElement buttonEmailEstimate=waitForElementLocateBy(By.id("Email Estimate"));
+        buttonEmailEstimate.click();
+        WebElement inputEmail = waitForElementLocateBy(By.id("input_618"));
+        inputEmail.click();
+        inputEmail.sendKeys(email);
+        waitForElementLocateBy(By.xpath("//*[@name='emailForm']" +
+                "//*[@class='md-raised md-primary cpc-button md-button md-ink-ripple']"))
+                .click();
+        flagSentEmail=true;
+    }
+
+    public boolean checkCostFromEmail() throws InterruptedException {
+        if (!flagSentEmail) throw new RuntimeException("Need to send email");
+        if (!webDriver.getWindowHandle().equals(idTabThisPage))
+            webDriver.switchTo().window(idTabThisPage);
+        String costInCalculator=totalEstimatedCostText;
+        costInCalculator=costInCalculator.replace("Total Estimated Cost: ","");
+        costInCalculator=costInCalculator.replace(" per 1 month", "");
+
+        webDriver.switchTo().window(idTabEmail);
+        return costInCalculator.equals(generateEmailPage.getCostFromEmail());
+    }
 
     private void checkPoint() {
         if (!flagInForm) {
-            webDriver=webDriver.switchTo().frame(waitForElementLocateBy(By.xpath("//*[@id=\"cloud-site\"]/devsite-iframe/iframe")));
-            webDriver=webDriver.switchTo().frame(waitForElementLocateBy(By.xpath("//*[@id=\"myFrame\"]")));
+            webDriver=webDriver.switchTo().frame(waitForElementLocateBy(By
+                    .xpath("//*[@id=\"cloud-site\"]/devsite-iframe/iframe")));
+            webDriver=webDriver.switchTo().frame(waitForElementLocateBy(By
+                    .xpath("//*[@id=\"myFrame\"]")));
             flagInForm =true;
         }
     }

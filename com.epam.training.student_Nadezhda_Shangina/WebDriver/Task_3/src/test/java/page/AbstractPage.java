@@ -27,4 +27,13 @@ public abstract class AbstractPage {
         return new WebDriverWait(webDriver, Duration.ofSeconds(WAIT_TIMEOUT_SECOND))
                 .until(ExpectedConditions.presenceOfAllElementsLocatedBy(by));
     }
+
+    protected boolean checkAvailable(By by) {
+        try {
+            webDriver.findElement(by);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
